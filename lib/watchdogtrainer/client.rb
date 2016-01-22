@@ -34,5 +34,24 @@ module Watchdogtrainer
       topic
     end
 
+
+    def lambda_function(function_name = DEFAULT_NAME, role_name = DEFAULT_NAME)
+      function = nil
+      resp = @lambda.list_functions
+      resp.on_success do |r|
+        function = r.funcnions.find {|f| %r(\A#{function_name}\z).match(f.function_name)}
+        unless function
+          function = @lambda.create_function(
+            function_name: DEFAULT_NAME,
+            runtime: 'nodejs',
+            role: DEFAULT_NAME,
+            handler: 'index.handler',
+            code: {zip_file: LambdaTemplate.encoded_zip('path/to/template')},
+            description: 'gerenated by watchdogtrainer'
+          )
+        end
+      end
+      function
+    end
   end
 end
