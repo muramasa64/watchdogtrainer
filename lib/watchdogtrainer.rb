@@ -1,5 +1,7 @@
 require "watchdogtrainer/version"
+require "watchdogtrainer/cli"
+require "watchdogtrainer/client"
 
 module Watchdogtrainer
-  # Your code goes here...
+  DEFAULT_NAME = 'watchdogtrainer'
 end
