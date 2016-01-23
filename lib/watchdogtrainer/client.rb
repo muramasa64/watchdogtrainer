@@ -1,4 +1,5 @@
 require 'aws-sdk'
+require 'tempfile'
 
 module Watchdogtrainer
   class Client
@@ -11,6 +12,7 @@ module Watchdogtrainer
       aws_configuration[:logger] = Logger.new STDOUT if @cli_options[:verbose]
 
       @sns = Aws::SNS::Resource.new(aws_configuration)
+      @iam = Aws::IAM::Resource.new(ws_configuration)
       @lambda = Aws::Lambda::Client.new(aws_configuration)
     end
 
@@ -34,8 +36,7 @@ module Watchdogtrainer
       topic
     end
 
-
-    def lambda_function(function_name = DEFAULT_NAME, role_name = DEFAULT_NAME)
+    def lambda_function(function_name: DEFAULT_NAME, role_name: DEFAULT_NAME)
       function = nil
       resp = @lambda.list_functions
       resp.on_success do |r|
@@ -52,6 +53,20 @@ module Watchdogtrainer
         end
       end
       function
+    end
+
+    def aws_account_number
+      @iam.current_user.arn.split(':')[4]
+    end
+
+    def lambda_zip(region: aws_configuration[:region], aws_account_number: aws_account_number, topic_name: DEFAULT_NAME)
+      template = BabyErubis::Text.new.from_file(Utils::templife_path('index.js'), 'utf-8')
+      context = {
+        region: region,
+        aws_account_number: aws_account_number,
+        topic_name: topic_name
+      }
+      output = template.render(context)
     end
   end
 end

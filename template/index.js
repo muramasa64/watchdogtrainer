@@ -47,7 +47,7 @@ exports.handler = function(event, context) {
             var params = {
                 Message: message,
                 Subject: 'Security Group Rule Changed at ' + event.detail.eventTime,
-                TopicArn: 'arn:aws:sns:<%= region %>:<%= aws_account_number %>:<%= name %>'
+                TopicArn: 'arn:aws:sns:<%= region %>:<%= aws_account_number %>:<%= topic_name %>'
             };
 
             var sns = new AWS.SNS({region: '<%= region %>'});
