@@ -33,4 +33,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency "aws-sdk", "~> 2.2.11"
   spec.add_dependency "thor", "~> 0.19.1"
   spec.add_dependency "thor-aws", "~> 0.0.4"
+  spec.add_dependency "baby_erubis", "~> 2.1.2"
 end
