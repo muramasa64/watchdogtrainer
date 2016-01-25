@@ -11,7 +11,7 @@ exports.handler = function(event, context) {
         "RevokeSecurityGroupEgress": "Outbound削除"
     };
 
-    var ec2 = new AWS.EC2({region: '<%= region %>'});
+    var ec2 = new AWS.EC2({region: '<%= @region %>'});
     var param = {GroupIds: [event.detail.requestParameters.groupId]};
     ec2.describeSecurityGroups(param, function(err, data) {
         if (err) {
@@ -47,10 +47,10 @@ exports.handler = function(event, context) {
             var params = {
                 Message: message,
                 Subject: 'Security Group Rule Changed at ' + event.detail.eventTime,
-                TopicArn: 'arn:aws:sns:<%= region %>:<%= aws_account_number %>:<%= topic_name %>'
+                TopicArn: 'arn:aws:sns:<%= @region %>:<%= @aws_account_number %>:<%= @topic_name %>'
             };
 
-            var sns = new AWS.SNS({region: '<%= region %>'});
+            var sns = new AWS.SNS({region: '<%= @region %>'});
             sns.publish(params, function(err, data) {
                 if (err) {
                     console.log(err, err.stack);

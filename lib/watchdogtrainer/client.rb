@@ -47,7 +47,7 @@ module Watchdogtrainer
             runtime: 'nodejs',
             role: DEFAULT_NAME,
             handler: 'index.handler',
-            code: {zip_file: LambdaTemplate.encoded_zip('path/to/template')},
+            code: {zip_file: Utils.template_path('index.js')
             description: 'gerenated by watchdogtrainer'
           )
         end
@@ -55,18 +55,17 @@ module Watchdogtrainer
       function
     end
 
-    def aws_account_number
-      @iam.current_user.arn.split(':')[4]
-    end
-
-    def lambda_zip(region: aws_configuration[:region], aws_account_number: aws_account_number, topic_name: DEFAULT_NAME)
-      template = BabyErubis::Text.new.from_file(Utils::templife_path('index.js'), 'utf-8')
-      context = {
-        region: region,
+    def lambda_code
+      LambdaTemplate.zipped_code(
+        template_filename: 'index.js',
+        region: aws_configuration[:region],
         aws_account_number: aws_account_number,
         topic_name: topic_name
-      }
-      output = template.render(context)
+      )
+    end
+
+    def aws_account_number
+      @iam.current_user.arn.split(':')[4]
     end
   end
 end
